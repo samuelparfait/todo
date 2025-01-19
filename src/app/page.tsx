@@ -143,14 +143,15 @@ export default function TodoList() {
   return (
     <div className='min-h-screen bg-gray-100 flex flex-col items-center justify-center p-12'>
       <h1 className='text-3xl font-bold text-gray-800 mb-2'>
-        Do Not Forget, Sam! 👋🏽
+        Good Morning, Sam! 👋🏽
       </h1>
       <p className='text-lg text-muted-foreground mb-8'>
         Today, {new Date().toDateString()}
       </p>
       <div className='w-full max-w-4xl bg-white rounded-lg shadow-lg p-6 space-y-6'>
         <h2 className='text-xl font-semibold'>
-          {todos.length} Todo{todos.length > 1 ? 's' : ''}, Oh My Gosh!
+          {todos.filter((todo) => todo.completed).length}
+          <span className='text-muted-foreground'> / {todos.length}</span>
         </h2>
         <div className='flex space-x-2'>
           <Input
