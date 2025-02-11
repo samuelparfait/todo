@@ -249,6 +249,7 @@ export default function TodoList() {
                                     a: (props) => (
                                       <a
                                         className='bg-green-200 font-semibold'
+                                        target='_blank'
                                         {...props}
                                       />
                                     ),
