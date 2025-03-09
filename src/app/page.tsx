@@ -31,6 +31,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useTodoStore, Todo } from '@/store/todo-store';
+import { greet } from '@/lib/greet';
 
 export default function TodoList() {
   const {
@@ -142,9 +143,7 @@ export default function TodoList() {
 
   return (
     <div className='min-h-screen bg-gray-100 flex flex-col items-center justify-center p-12'>
-      <h1 className='text-3xl font-bold text-gray-800 mb-2'>
-        Good Morning, Sam! 👋🏽
-      </h1>
+      <h1 className='text-3xl font-bold text-gray-800 mb-2'>{greet('Sam')}</h1>
       <p className='text-lg text-muted-foreground mb-8'>
         Today, {new Date().toDateString()}
       </p>
