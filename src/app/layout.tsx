@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Analytics } from '@vercel/analytics/react';
 import localFont from 'next/font/local';
 
 import '@/styles/globals.css';
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang='en'>
       <body lang='en' className={myFont.className}>
         {children}
+        <Analytics />
       </body>
     </html>
   );
