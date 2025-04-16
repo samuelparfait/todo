@@ -31,7 +31,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useTodoStore, Todo } from '@/store/todo-store';
-import { greet } from '@/lib/greet';
+import { greet } from '@/utils/greet';
 
 export default function TodoList() {
   const {
