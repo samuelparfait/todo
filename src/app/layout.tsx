@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 
 const myFont = localFont({
   src: '../../public/fonts/Ginto-Copilot-Upright-Variable.woff2',
+
   display: 'swap',
 });
 
