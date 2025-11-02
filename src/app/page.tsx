@@ -143,7 +143,9 @@ export default function TodoList() {
 
   return (
     <div className='min-h-screen bg-gray-100 flex flex-col items-center justify-center p-12'>
-      <h1 className='text-3xl font-bold text-gray-800 mb-2'>{greet('Sam')}</h1>
+      <h1 className='text-3xl font-bold text-gray-800 mb-2'>
+        {greet('buddy')}
+      </h1>
       <p className='text-lg text-muted-foreground mb-8'>
         Today, {new Date().toDateString()}
       </p>
@@ -247,7 +249,7 @@ export default function TodoList() {
                                   components={{
                                     a: (props) => (
                                       <a
-                                        className='bg-green-200 font-semibold'
+                                        className='bg-purple-200 text-sm text-purple-700 font-semibold p-1 rounded-sm'
                                         target='_blank'
                                         {...props}
                                       />

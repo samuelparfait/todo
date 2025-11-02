@@ -5,7 +5,7 @@ import localFont from 'next/font/local';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
-  title: '✅ Todo',
+  title: 'Todo',
   description: 'A basic todo list',
 };
 
