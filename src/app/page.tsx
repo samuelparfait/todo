@@ -126,7 +126,6 @@ export default function TodoList() {
   };
 
   const handleExport = () => {
-    // TODO
     const filename = `todo-${formatDate(new Date())}.json`;
     const jsonStr = JSON.stringify(todos, null, 2);
     const blob = new Blob([jsonStr], { type: "application/json" });
