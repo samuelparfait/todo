@@ -10,6 +10,7 @@ import {
   X,
   Check,
   Download,
+  CheckCircle,
 } from "lucide-react";
 import {
   DragDropContext,
@@ -17,7 +18,6 @@ import {
   Draggable,
   DropResult,
 } from "@hello-pangea/dnd";
-import ReactMarkdown from "react-markdown";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -37,8 +37,8 @@ export default function TodoList() {
   const {
     todos,
     addTodo,
-    toggleTodo,
     deleteTodo,
+    deleteMultipleTodos,
     editTodo,
     reorderTodos,
     uploadTodos,
@@ -46,6 +46,7 @@ export default function TodoList() {
   const [newTodo, setNewTodo] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
+  const [selectedTodos, setSelectedTodos] = useState<string[]>([]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -74,6 +75,27 @@ export default function TodoList() {
     setEditText("");
   };
 
+  const handleSelectTodo = (id: string) => {
+    if (selectedTodos.includes(id)) {
+      setSelectedTodos(selectedTodos.filter((todoId) => todoId !== id));
+    } else {
+      setSelectedTodos([...selectedTodos, id]);
+    }
+  };
+
+  const handleSelectAll = () => {
+    if (selectedTodos.length === todos.length) {
+      setSelectedTodos([]);
+    } else {
+      setSelectedTodos(todos.map((todo) => todo.id));
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    deleteMultipleTodos(selectedTodos);
+    setSelectedTodos([]);
+  };
+
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
@@ -89,7 +111,6 @@ export default function TodoList() {
               id:
                 Date.now().toString() + Math.random().toString(36).substr(2, 9),
               text: item.text || "",
-              completed: item.completed || false,
             }));
 
             uploadTodos(newTodos);
@@ -147,10 +168,7 @@ export default function TodoList() {
         Today, {new Date().toDateString()}
       </p>
       <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6 space-y-6">
-        <h2 className="text-xl font-semibold">
-          {todos.filter((todo) => todo.completed).length}
-          <span className="text-muted-foreground"> / {todos.length}</span>
-        </h2>
+        <h2 className="text-xl font-semibold">{todos.length} tasks</h2>
         <div className="flex space-x-2">
           <Input
             type="text"
@@ -179,17 +197,39 @@ export default function TodoList() {
             <Download className="h-5 w-5" />
             <span className="sr-only">Export todos</span>
           </Button>
+          {selectedTodos.length > 0 && (
+            <Button onClick={handleDeleteSelected} variant="destructive">
+              <Trash2 className="h-5 w-5" />
+              Delete {selectedTodos.length}
+            </Button>
+          )}
         </div>
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="todos">
-            {(provided) => (
-              <Table className="text-base">
+        {todos.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+            <CheckCircle className="h-16 w-16 mb-4" />
+            <p className="text-lg">No tasks yet. Add one above to get started!</p>
+          </div>
+        ) : (
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="todos">
+              {(provided) => (
+                <Table className="text-base">
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[50px]">Order</TableHead>
-                    <TableHead className="w-[50px]">Done</TableHead>
+                    <TableHead className="w-[50px]">
+                      <Checkbox
+                        checked={
+                          selectedTodos.length === todos.length &&
+                          todos.length > 0
+                        }
+                        onCheckedChange={handleSelectAll}
+                        aria-label="Select all tasks"
+                      />
+                    </TableHead>
+
                     <TableHead>Task</TableHead>
-                    <TableHead className="w-[100px]">Actions</TableHead>
+                    <TableHead className="w-[100px] text-right">Edit</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody {...provided.droppableProps} ref={provided.innerRef}>
@@ -217,11 +257,12 @@ export default function TodoList() {
                           </TableCell>
                           <TableCell>
                             <Checkbox
-                              checked={todo.completed}
-                              onCheckedChange={() => toggleTodo(todo.id)}
-                              id={`todo-${todo.id}`}
+                              checked={selectedTodos.includes(todo.id)}
+                              onCheckedChange={() => handleSelectTodo(todo.id)}
+                              aria-label={`Select task: ${todo.text}`}
                             />
                           </TableCell>
+
                           <TableCell className="py-4">
                             {editingId === todo.id ? (
                               <Input
@@ -233,33 +274,21 @@ export default function TodoList() {
                                 }
                               />
                             ) : (
-                              <label
-                                htmlFor={`todo-${todo.id}`}
-                                className={`${
-                                  todo.completed
-                                    ? "line-through text-gray-500"
-                                    : "text-gray-800"
-                                }`}
+                              <div
+                                className="text-gray-800"
+                                aria-describedby={`task-${todo.id}`}
                               >
-                                <ReactMarkdown
+                                <span
+                                  id={`task-${todo.id}`}
                                   className="text-md leading-relaxed"
-                                  components={{
-                                    a: (props) => (
-                                      <a
-                                        className="bg-purple-200 text-sm text-purple-700 font-semibold p-1 rounded-sm"
-                                        target="_blank"
-                                        {...props}
-                                      />
-                                    ),
-                                  }}
                                 >
                                   {todo.text}
-                                </ReactMarkdown>
-                              </label>
+                                </span>
+                              </div>
                             )}
                           </TableCell>
                           <TableCell>
-                            <div className="flex space-x-2">
+                            <div className="flex space-x-2 justify-end">
                               {editingId === todo.id ? (
                                 <>
                                   <Button
@@ -289,14 +318,6 @@ export default function TodoList() {
                                   <span className="sr-only">Edit todo</span>
                                 </Button>
                               )}
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => deleteTodo(todo.id)}
-                              >
-                                <Trash2 className="h-5 w-5 text-red-500" />
-                                <span className="sr-only">Delete todo</span>
-                              </Button>
                             </div>
                           </TableCell>
                         </TableRow>
@@ -305,10 +326,11 @@ export default function TodoList() {
                   ))}
                   {provided.placeholder}
                 </TableBody>
-              </Table>
-            )}
-          </Droppable>
-        </DragDropContext>
+                </Table>
+              )}
+            </Droppable>
+          </DragDropContext>
+        )}
       </div>
     </div>
   );
