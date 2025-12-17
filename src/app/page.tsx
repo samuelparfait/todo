@@ -11,6 +11,8 @@ import {
   Check,
   Download,
   CheckCircle,
+  ListFilter,
+  Hand,
 } from "lucide-react";
 import {
   DragDropContext,
@@ -18,6 +20,7 @@ import {
   Draggable,
   DropResult,
 } from "@hello-pangea/dnd";
+import ReactMarkdown from "react-markdown";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -207,125 +210,146 @@ export default function TodoList() {
         {todos.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-gray-500">
             <CheckCircle className="h-16 w-16 mb-4" />
-            <p className="text-lg">No tasks yet. Add one above to get started!</p>
+            <p className="text-lg">
+              No tasks yet. Add one above to get started!
+            </p>
           </div>
         ) : (
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="todos">
               {(provided) => (
                 <Table className="text-base">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[50px]">Order</TableHead>
-                    <TableHead className="w-[50px]">
-                      <Checkbox
-                        checked={
-                          selectedTodos.length === todos.length &&
-                          todos.length > 0
-                        }
-                        onCheckedChange={handleSelectAll}
-                        aria-label="Select all tasks"
-                      />
-                    </TableHead>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[50px]"></TableHead>
+                      <TableHead className="w-[50px]">
+                        <Checkbox
+                          checked={
+                            selectedTodos.length === todos.length &&
+                            todos.length > 0
+                          }
+                          onCheckedChange={handleSelectAll}
+                          aria-label="Select all tasks"
+                        />
+                      </TableHead>
 
-                    <TableHead>Task</TableHead>
-                    <TableHead className="w-[100px] text-right">Edit</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody {...provided.droppableProps} ref={provided.innerRef}>
-                  {todos.map((todo, index) => (
-                    <Draggable
-                      key={todo.id}
-                      draggableId={todo.id}
-                      index={index}
-                    >
-                      {(provided, snapshot) => (
-                        <TableRow
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          className={`${
-                            snapshot.isDragging ? "bg-blue-100" : ""
-                          }`}
-                        >
-                          <TableCell>
-                            <span
-                              {...provided.dragHandleProps}
-                              className="cursor-move"
-                            >
-                              <GripVertical className="h-5 w-5 text-gray-400" />
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            <Checkbox
-                              checked={selectedTodos.includes(todo.id)}
-                              onCheckedChange={() => handleSelectTodo(todo.id)}
-                              aria-label={`Select task: ${todo.text}`}
-                            />
-                          </TableCell>
-
-                          <TableCell className="py-4">
-                            {editingId === todo.id ? (
-                              <Input
-                                value={editText}
-                                onChange={(e) => setEditText(e.target.value)}
-                                className="w-full"
-                                onKeyDown={(e) =>
-                                  e.key === "Enter" && handleEditSave()
-                                }
-                              />
-                            ) : (
-                              <div
-                                className="text-gray-800"
-                                aria-describedby={`task-${todo.id}`}
+                      <TableHead className="text-gray-400">Task</TableHead>
+                      <TableHead className="w-[100px] text-gray-400 text-right">
+                        Edit
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    {todos.map((todo, index) => (
+                      <Draggable
+                        key={todo.id}
+                        draggableId={todo.id}
+                        index={index}
+                      >
+                        {(provided, snapshot) => (
+                          <TableRow
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            className={`${
+                              snapshot.isDragging ? "bg-blue-100" : ""
+                            }`}
+                          >
+                            <TableCell>
+                              <span
+                                {...provided.dragHandleProps}
+                                className="cursor-move"
                               >
-                                <span
-                                  id={`task-${todo.id}`}
-                                  className="text-md leading-relaxed"
-                                >
-                                  {todo.text}
-                                </span>
-                              </div>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex space-x-2 justify-end">
+                                <GripVertical className="h-5 w-5 text-gray-400" />
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <Checkbox
+                                checked={selectedTodos.includes(todo.id)}
+                                onCheckedChange={() =>
+                                  handleSelectTodo(todo.id)
+                                }
+                                aria-label={`Select task: ${todo.text}`}
+                              />
+                            </TableCell>
+
+                            <TableCell className="py-4">
                               {editingId === todo.id ? (
-                                <>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={handleEditSave}
-                                  >
-                                    <Check className="h-5 w-5 text-green-500" />
-                                    <span className="sr-only">Save edit</span>
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={handleEditCancel}
-                                  >
-                                    <X className="h-5 w-5 text-red-500" />
-                                    <span className="sr-only">Cancel edit</span>
-                                  </Button>
-                                </>
+                                <Input
+                                  value={editText}
+                                  onChange={(e) => setEditText(e.target.value)}
+                                  className="w-full"
+                                  onKeyDown={(e) =>
+                                    e.key === "Enter" && handleEditSave()
+                                  }
+                                />
                               ) : (
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleEditStart(todo)}
+                                <div
+                                  className="text-gray-800"
+                                  aria-describedby={`task-${todo.id}`}
                                 >
-                                  <Edit2 className="h-5 w-5 text-purple-500" />
-                                  <span className="sr-only">Edit todo</span>
-                                </Button>
+                                  <ReactMarkdown
+                                    id={`task-${todo.id}`}
+                                    className="text-md leading-relaxed"
+                                    components={{
+                                      a: (props) => (
+                                        <a
+                                          className="bg-purple-200 text-sm text-purple-700 font-semibold p-1 rounded-sm"
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          {...props}
+                                        />
+                                      ),
+                                    }}
+                                  >
+                                    {todo.text}
+                                  </ReactMarkdown>
+                                </div>
                               )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </TableBody>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex space-x-2 justify-end">
+                                {editingId === todo.id ? (
+                                  <>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={handleEditSave}
+                                    >
+                                      <Check className="h-5 w-5 text-green-500" />
+                                      <span className="sr-only">Save edit</span>
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={handleEditCancel}
+                                    >
+                                      <X className="h-5 w-5 text-red-500" />
+                                      <span className="sr-only">
+                                        Cancel edit
+                                      </span>
+                                    </Button>
+                                  </>
+                                ) : (
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleEditStart(todo)}
+                                  >
+                                    <Edit2 className="h-5 w-5 text-purple-500" />
+                                    <span className="sr-only">Edit todo</span>
+                                  </Button>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </TableBody>
                 </Table>
               )}
             </Droppable>
