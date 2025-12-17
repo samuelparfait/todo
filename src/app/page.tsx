@@ -290,22 +290,23 @@ export default function TodoList() {
                                   className="text-gray-800"
                                   aria-describedby={`task-${todo.id}`}
                                 >
-                                  <ReactMarkdown
-                                    id={`task-${todo.id}`}
-                                    className="text-md leading-relaxed"
-                                    components={{
-                                      a: (props) => (
-                                        <a
-                                          className="bg-purple-200 text-sm text-purple-700 font-semibold p-1 rounded-sm"
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          {...props}
-                                        />
-                                      ),
-                                    }}
-                                  >
-                                    {todo.text}
-                                  </ReactMarkdown>
+                                  <span id={`task-${todo.id}`}>
+                                    <ReactMarkdown
+                                      className="text-md leading-relaxed"
+                                      components={{
+                                        a: (props) => (
+                                          <a
+                                            className="bg-purple-200 text-sm text-purple-700 font-semibold p-1 rounded-sm"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            {...props}
+                                          />
+                                        ),
+                                      }}
+                                    >
+                                      {todo.text}
+                                    </ReactMarkdown>
+                                  </span>
                                 </div>
                               )}
                             </TableCell>
